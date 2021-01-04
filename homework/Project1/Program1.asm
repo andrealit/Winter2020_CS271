@@ -24,30 +24,30 @@ INCLUDE Irvine32.inc
 
 	; Introduction
 	intro			BYTE	"---------------------------------------------------------------------------", 13, 10,
-							    "   Elementary Arithmetic by Andrea Tongsak ", 13, 10,
-							    "---------------------------------------------------------------------------", 0
+					"   Elementary Arithmetic by Andrea Tongsak ", 13, 10,
+					"---------------------------------------------------------------------------", 0
 
 	extra_credit	BYTE	"**EC1: Program verifies second number is less than first.", 13, 10,
-							        "**EC2: Display the square of each number.", 0
+				"**EC2: Display the square of each number.", 0
 
 	instructions	BYTE	"Enter two numbers, and I'll show the sum, difference, product, quotient, and remainder.", 13, 10,
-							        "Warning: the first number MUST be greater than the second. (ie. 10, 5)", 0
+				"Warning: the first number MUST be greater than the second. (ie. 10, 5)", 0
 	
 	userInput_1		BYTE	"First number: ", 0
 	userInput_2		BYTE	"Second number: ", 0
-	size_warning	BYTE	" Warning: Second number must be smaller than the first.", 13, 10,
-							        " Re-enter second number.", 0
-	undefined_msg	BYTE	"UNDEFINED", 0
+	size_warning		BYTE	" Warning: Second number must be smaller than the first.", 13, 10,
+					" Re-enter second number.", 0
+	undefined_msg		BYTE	"UNDEFINED", 0
 	square_msg		BYTE	"Square of ", 0
 
 	; Arithmetic
-	equal			  BYTE	" = ", 0
-	plus			  BYTE	" + ", 0
-	minus			  BYTE	" - ", 0
-	times			  BYTE	" x ", 0
+	equal			BYTE	" = ", 0
+	plus			BYTE	" + ", 0
+	minus			BYTE	" - ", 0
+	times			BYTE	" x ", 0
 	divided			BYTE	" / ", 0
 	remainder		BYTE	" remainder ", 0
-	operatorpm	BYTE	" ", 0
+	operatorpm		BYTE	" ", 0
 
 	; Variables
 	userNum_1		DWORD	?
@@ -78,15 +78,15 @@ introduction	PROC
 	call    CrLf
 	call    CrLf
 
-	mov		  edx, OFFSET extra_credit			; Extra Credit 1 and 2
-	call	  WriteString
-	call	  CrLf
-	call	  CrLf
+	mov	edx, OFFSET extra_credit			; Extra Credit 1 and 2
+	call	WriteString
+	call	CrLf
+	call	CrLf
 
-	mov		  edx, OFFSET instructions			; Instructions
-	call	  WriteString
-	call	  CrLf
-	call	  CrLf
+	mov	edx, OFFSET instructions			; Instructions
+	call	WriteString
+	call	CrLf
+	call	CrLf
 
 	ret
 
@@ -105,15 +105,15 @@ getUserData		PROC
 
 	inputNum1:
 		mov		edx, OFFSET userInput_1
-		call	WriteString
-		call	ReadInt
+		call		WriteString
+		call		ReadInt
 		mov		userNum_1, eax
 		jmp		inputNum2
 
 	inputNum2:
 		mov		edx, OFFSET userInput_2
-		call	WriteString
-		call	ReadInt
+		call		WriteString
+		call		ReadInt
 		mov		userNum_2, eax
 		cmp		userNum_1, eax
 		jl		reaskSecond
@@ -121,8 +121,8 @@ getUserData		PROC
 
 	reaskSecond:								; Extra Credit 1: Will reask if the value is larger than first
 		mov		edx, OFFSET size_warning
-		call	WriteString
-		call	CrLf
+		call		WriteString
+		call		CrLf
 		jmp		inputNum2
 
 	skip1:
@@ -145,7 +145,7 @@ showCalculation PROC
 
 	A1:
 		mov		eax, userNum_1
-		call	WriteDec
+		call		WriteDec
 
 	A2:
 		mov		al, cl
@@ -165,51 +165,51 @@ showCalculation PROC
 		
 	printPlus:								; Addition version
 		mov		edx, OFFSET plus
-		call	WriteString
+		call		WriteString
 		jmp		A3
 			
 	printMinus:								; Subtraction version
 		mov		edx, OFFSET minus
-		call	WriteString
+		call		WriteString
 		jmp		A3
 
 	printTimes:								; Multiplication version
 		mov		edx, OFFSET times
-		call	WriteString
+		call		WriteString
 		jmp		A3
 
 	printDivision:							; Division version
 		mov		edx, OFFSET divided
-		call	WriteString
+		call		WriteString
 		jmp		A4
 
 	A3:
 		mov		eax, userNum_2
-		call	WriteDec
+		call		WriteDec
 		
 		mov		edx, OFFSET equal
-		call	WriteString
+		call		WriteString
 
 		mov		eax, result
-		call	WriteDec
+		call		WriteDec
 
 		jmp		skipC
 
 	A4:										;  Division needs to have both quotient and remainder
 		mov		eax, userNum_2
-		call	WriteDec
+		call		WriteDec
 
 		mov		edx, OFFSET equal
-		call	WriteString
+		call		WriteString
 
 		mov		eax, quotient
-		call	WriteDec
+		call		WriteDec
 
 		mov		edx, OFFSET remainder
-		call	WriteString
+		call		WriteString
 
 		mov		eax, remain
-		call	WriteDec
+		call		WriteDec
 
 	skipC:
 

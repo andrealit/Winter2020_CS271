@@ -1,7 +1,7 @@
 TITLE Program #1	(Program1.asm)
 
 ; Author: Andrea Tongsak
-; OSU email address: atongsak@oregonstate.edu
+; OSU email address: tongsaka@oregonstate.edu
 ; Course number/section: CS271-001
 ; Assignment Number: Program #1
 ; Due Date: Jan 15, 2020
@@ -27,11 +27,11 @@ INCLUDE Irvine32.inc
 					"   Elementary Arithmetic by Andrea Tongsak ", 13, 10,
 					"---------------------------------------------------------------------------", 0
 
-	extra_credit	BYTE	"**EC1: Program verifies second number is less than first.", 13, 10,
-				"**EC2: Display the square of each number.", 0
+	extra_credit		BYTE	"**EC1: Program verifies second number is less than first.", 13, 10,
+					"**EC2: Display the square of each number.", 0
 
-	instructions	BYTE	"Enter two numbers, and I'll show the sum, difference, product, quotient, and remainder.", 13, 10,
-				"Warning: the first number MUST be greater than the second. (ie. 10, 5)", 0
+	instructions		BYTE	"Enter two numbers, and I'll show the sum, difference, product, quotient, and remainder.", 13, 10,
+					"Warning: the first number MUST be greater than the second. (ie. 10, 5)", 0
 	
 	userInput_1		BYTE	"First number: ", 0
 	userInput_2		BYTE	"Second number: ", 0
@@ -213,7 +213,7 @@ showCalculation PROC
 
 	skipC:
 
-		call	CrLf
+		call		CrLf
 
 		ret
 
@@ -236,7 +236,7 @@ showAddition PROC
 		add		eax, ebx
 		mov		result, eax
 		
-		call	showCalculation
+		call		showCalculation
 
 		ret
 
@@ -259,7 +259,7 @@ showSubtraction PROC
 		sub		eax, ebx
 		mov		result, eax
 		
-		call	showCalculation
+		call		showCalculation
 
 		ret
 
@@ -282,7 +282,7 @@ showMultiplication PROC
 		mul		ebx
 		mov		result, eax
 		
-		call	showCalculation
+		call		showCalculation
 
 		ret
 
@@ -313,29 +313,29 @@ showDivision PROC
 		mov		eax, userNum_1
 		mov		ebx, userNum_2
 		cdq								; convert doubleword to quadword
-		idiv	ebx
+		idiv		ebx
 		mov		quotient, eax
 		mov		remain, edx
 
-		call	showCalculation
+		call		showCalculation
 		jmp		skipDiv
 
 	D1:									; if the second value is zero, then UNDEFINED
 		mov		eax, userNum_1
-		call	WriteDec
+		call		WriteDec
 
 		mov		edx, OFFSET divided
-		call	WriteString
+		call		WriteString
 
 		mov		eax, userNum_2
-		call	WriteDec
+		call		WriteDec
 
 		mov		edx, OFFSET equal
-		call	WriteString
+		call		WriteString
 
 		mov		edx, OFFSET undefined_msg
-		call	WriteString
-		call	CrLf
+		call		WriteString
+		call		CrLf
 		jmp		skipDiv
 
 	D2:									; if the first number is 0, then the value is 0.
@@ -361,36 +361,36 @@ showSquares PROC
 	; FIRST VALUE
 	
 	mov		edx, OFFSET square_msg
-	call	WriteString
+	call		WriteString
 
 	mov		eax, userNum_1
-	call	WriteDec
+	call		WriteDec
 
 	mov		edx, OFFSET equal
-	call	WriteString
+	call		WriteString
 
 	mov		ebx, eax
 	mul		ebx
-	call	WriteDec
+	call		WriteDec
 
-	call	CrLf
+	call		CrLf
 
 	; SECOND VALUE
 
 	mov		edx, OFFSET square_msg
-	call	WriteString
+	call		WriteString
 
 	mov		eax, userNum_2
-	call	WriteDec
+	call		WriteDec
 
 	mov		edx, OFFSET equal
-	call	WriteString
+	call		WriteString
 
 	mov		ebx, eax
 	mul		ebx
-	call	WriteDec
+	call		WriteDec
 
-	call	CrLf
+	call		CrLf
 
 	ret
 
@@ -406,7 +406,7 @@ showSquares	ENDP
 ;**************************************************
 terminate PROC
 	call	CrLf
-	mov		edx, OFFSET exitMsg
+	mov	edx, OFFSET exitMsg
 	call	WriteString
 	call	CrLf
 	

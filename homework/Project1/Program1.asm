@@ -4,7 +4,7 @@ TITLE Program #1	(Program1.asm)
 ; OSU email address: tongsaka@oregonstate.edu
 ; Course number/section: CS271-001
 ; Assignment Number: Program #1
-; Due Date: Jan 15, 2020
+; Due Date: Jan 15, 2021
 
 ; Description:
 	; This program will prompt the user for two positive integers, and perform math operations
@@ -24,20 +24,20 @@ INCLUDE Irvine32.inc
 
 	; Introduction
 	intro			BYTE	"---------------------------------------------------------------------------", 13, 10,
-					"   Elementary Arithmetic by Andrea Tongsak ", 13, 10,
-					"---------------------------------------------------------------------------", 0
+							"   Elementary Arithmetic by Andrea Tongsak ", 13, 10,
+							"---------------------------------------------------------------------------", 0
 
-	extra_credit		BYTE	"**EC1: Program verifies second number is less than first.", 13, 10,
-					"**EC2: Display the square of each number.", 0
+	extra_credit	BYTE	"**EC1: Program verifies second number is less than first.", 13, 10,
+							"**EC2: Display the square of each number.", 0
 
-	instructions		BYTE	"Enter two numbers, and I'll show the sum, difference, product, quotient, and remainder.", 13, 10,
-					"Warning: the first number MUST be greater than the second. (ie. 10, 5)", 0
+	instructions	BYTE	"Enter two numbers, and I'll show the sum, difference, product, quotient, and remainder.", 13, 10,
+							"Warning: the first number MUST be greater than the second. (ie. 10, 5)", 0
 	
 	userInput_1		BYTE	"First number: ", 0
 	userInput_2		BYTE	"Second number: ", 0
-	size_warning		BYTE	" Warning: Second number must be smaller than the first.", 13, 10,
-					" Re-enter second number.", 0
-	undefined_msg		BYTE	"UNDEFINED", 0
+	size_warning	BYTE	" Warning: Second number must be smaller than the first.", 13, 10,
+							" Re-enter second number.", 0
+	undefined_msg	BYTE	"UNDEFINED", 0
 	square_msg		BYTE	"Square of ", 0
 
 	; Arithmetic
@@ -52,7 +52,9 @@ INCLUDE Irvine32.inc
 	; Variables
 	userNum_1		DWORD	?
 	userNum_2		DWORD	?
-	result			DWORD	?
+	sum				DWORD	?
+	difference		DWORD	?
+	product			DWORD	?
 	quotient		DWORD	?
 	remain			DWORD	?
 
@@ -64,8 +66,31 @@ INCLUDE Irvine32.inc
 
 
 
+;*********** MAIN *************
+; main
+;	Calls all the arithmetic operators, introduction, and goodbye
+;	Receives: N/A
+;	Returns: N/A
+;**************************************************
+main PROC
+
+	call	introduction
+	call    getUserData
+	call	showAddition
+	call	showSubtraction
+	call	showMultiplication
+	call	showDivision
+	call	showSquares
+
+	call	terminate
+
+	exit
+
+main ENDP 
+
+
+
 ; **************** INTRODUCTION *******************
-;
 ; introduction
 ;	Displays greeting message to the user
 ;	Receives: N/A
@@ -78,16 +103,16 @@ introduction	PROC
 	call    CrLf
 	call    CrLf
 
-	mov	edx, OFFSET extra_credit			; Extra Credit 1 and 2
+	mov		edx, OFFSET extra_credit			; Extra Credit 1 and 2
 	call	WriteString
 	call	CrLf
 	call	CrLf
 
-	mov	edx, OFFSET instructions			; Instructions
+	mov		edx, OFFSET instructions			; Instructions
 	call	WriteString
 	call	CrLf
 	call	CrLf
-
+	
 	ret
 
 introduction	ENDP
@@ -95,7 +120,6 @@ introduction	ENDP
 
 
 ; **************** getUserData *******************
-;
 ; getUserData
 ;	Takes user data as input
 ;	Receives: user input
@@ -105,15 +129,15 @@ getUserData		PROC
 
 	inputNum1:
 		mov		edx, OFFSET userInput_1
-		call		WriteString
-		call		ReadInt
+		call	WriteString
+		call	ReadInt
 		mov		userNum_1, eax
 		jmp		inputNum2
 
 	inputNum2:
 		mov		edx, OFFSET userInput_2
-		call		WriteString
-		call		ReadInt
+		call	WriteString
+		call	ReadInt
 		mov		userNum_2, eax
 		cmp		userNum_1, eax
 		jl		reaskSecond
@@ -121,8 +145,8 @@ getUserData		PROC
 
 	reaskSecond:								; Extra Credit 1: Will reask if the value is larger than first
 		mov		edx, OFFSET size_warning
-		call		WriteString
-		call		CrLf
+		call	WriteString
+		call	CrLf
 		jmp		inputNum2
 
 	skip1:
@@ -145,7 +169,7 @@ showCalculation PROC
 
 	A1:
 		mov		eax, userNum_1
-		call		WriteDec
+		call	WriteDec
 
 	A2:
 		mov		al, cl
@@ -163,57 +187,80 @@ showCalculation PROC
 
 		jmp		skipC
 		
-	printPlus:								; Addition version
+	printPlus:									; Addition version
 		mov		edx, OFFSET plus
-		call		WriteString
-		jmp		A3
-			
-	printMinus:								; Subtraction version
-		mov		edx, OFFSET minus
-		call		WriteString
-		jmp		A3
-
-	printTimes:								; Multiplication version
-		mov		edx, OFFSET times
-		call		WriteString
-		jmp		A3
-
-	printDivision:							; Division version
-		mov		edx, OFFSET divided
-		call		WriteString
-		jmp		A4
-
-	A3:
-		mov		eax, userNum_2
-		call		WriteDec
+		call	WriteString
+		jmp		resultASM
+	
+	SumPrint:
+		mov		eax, sum
+		call	WriteDec
+		jmp		skipC
 		
-		mov		edx, OFFSET equal
-		call		WriteString
-
-		mov		eax, result
-		call		WriteDec
-
+		
+	printMinus:									; Subtraction version
+		mov		edx, OFFSET minus
+		call	WriteString
+		jmp		resultASM
+	
+	DiffPrint:
+		mov		eax, difference
+		call	WriteDec
 		jmp		skipC
 
-	A4:										;  Division needs to have both quotient and remainder
+
+	printTimes:									; Multiplication version
+		mov		edx, OFFSET times
+		call	WriteString
+		jmp		resultASM
+	
+	ProductPrint:
+		mov		eax, product
+		call	WriteDec
+		jmp		skipC
+
+
+	printDivision:								; Division version
+		mov		edx, OFFSET divided
+		call	WriteString
+		jmp		resultDiv
+
+	resultASM:									; The difference between this and the next is that these only have one result
 		mov		eax, userNum_2
-		call		WriteDec
+		call	WriteDec
+		
+		mov		edx, OFFSET equal
+		call	WriteString
+
+		mov		al, cl
+		cmp		al, 1
+		je		SumPrint
+		
+		cmp		al, 2
+		je		DiffPrint
+		
+		cmp		al, 3
+		je		ProductPrint
+
+	resultDiv:									;  Division needs to have both quotient and remainder
+		mov		eax, userNum_2
+		call	WriteDec
 
 		mov		edx, OFFSET equal
-		call		WriteString
+		call	WriteString
 
 		mov		eax, quotient
-		call		WriteDec
+		call	WriteDec
 
 		mov		edx, OFFSET remainder
-		call		WriteString
+		call	WriteString
 
 		mov		eax, remain
-		call		WriteDec
+		call	WriteDec
 
 	skipC:
 
-		call		CrLf
+		call	CrLf
 
 		ret
 
@@ -234,9 +281,9 @@ showAddition PROC
 		mov		eax, userNum_1
 		mov		ebx, userNum_2
 		add		eax, ebx
-		mov		result, eax
-		
-		call		showCalculation
+		mov		sum, eax
+
+		call	showCalculation
 
 		ret
 
@@ -257,9 +304,9 @@ showSubtraction PROC
 		mov		eax, userNum_1
 		mov		ebx, userNum_2
 		sub		eax, ebx
-		mov		result, eax
+		mov		difference, eax
 		
-		call		showCalculation
+		call	showCalculation
 
 		ret
 
@@ -280,9 +327,9 @@ showMultiplication PROC
 		mov		eax, userNum_1
 		mov		ebx, userNum_2
 		mul		ebx
-		mov		result, eax
+		mov		product, eax
 		
-		call		showCalculation
+		call	showCalculation
 
 		ret
 
@@ -312,33 +359,33 @@ showDivision PROC
 		mov		cl, 4
 		mov		eax, userNum_1
 		mov		ebx, userNum_2
-		cdq								; convert doubleword to quadword
-		idiv		ebx
+		cdq										; convert doubleword to quadword
+		idiv	ebx
 		mov		quotient, eax
 		mov		remain, edx
 
-		call		showCalculation
+		call	showCalculation
 		jmp		skipDiv
 
-	D1:									; if the second value is zero, then UNDEFINED
+	D1:											; if the second value is zero, then UNDEFINED
 		mov		eax, userNum_1
-		call		WriteDec
+		call	WriteDec
 
 		mov		edx, OFFSET divided
-		call		WriteString
+		call	WriteString
 
 		mov		eax, userNum_2
-		call		WriteDec
+		call	WriteDec
 
 		mov		edx, OFFSET equal
-		call		WriteString
+		call	WriteString
 
 		mov		edx, OFFSET undefined_msg
-		call		WriteString
-		call		CrLf
+		call	WriteString
+		call	CrLf
 		jmp		skipDiv
 
-	D2:									; if the first number is 0, then the value is 0.
+	D2:											; if the first number is 0, then the value is 0.
 		mov		quotient, 0
 		mov		remain, 0
 		jmp		skipDiv
@@ -361,36 +408,36 @@ showSquares PROC
 	; FIRST VALUE
 	
 	mov		edx, OFFSET square_msg
-	call		WriteString
+	call	WriteString
 
 	mov		eax, userNum_1
-	call		WriteDec
+	call	WriteDec
 
 	mov		edx, OFFSET equal
-	call		WriteString
+	call	WriteString
 
 	mov		ebx, eax
 	mul		ebx
-	call		WriteDec
+	call	WriteDec
 
-	call		CrLf
+	call	CrLf
 
 	; SECOND VALUE
 
 	mov		edx, OFFSET square_msg
-	call		WriteString
+	call	WriteString
 
 	mov		eax, userNum_2
-	call		WriteDec
+	call	WriteDec
 
 	mov		edx, OFFSET equal
-	call		WriteString
+	call	WriteString
 
 	mov		ebx, eax
 	mul		ebx
-	call		WriteDec
+	call	WriteDec
 
-	call		CrLf
+	call	CrLf
 
 	ret
 
@@ -406,36 +453,12 @@ showSquares	ENDP
 ;**************************************************
 terminate PROC
 	call	CrLf
-	mov	edx, OFFSET exitMsg
+	mov		edx, OFFSET exitMsg
 	call	WriteString
 	call	CrLf
 	
 	ret
 
 terminate ENDP
-
-
-
-;*********** MAIN *************
-; main
-;	Calls all the arithmetic operators, introduction, and goodbye
-;	Receives: N/A
-;	Returns: N/A
-;**************************************************
-main PROC
-
-	call	introduction
-	call    getUserData
-	call	showAddition
-	call	showSubtraction
-	call	showMultiplication
-	call	showDivision
-	call	showSquares
-
-	call	terminate
-
-	exit
-
-main ENDP 
 
 END main
